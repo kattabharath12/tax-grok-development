@@ -2,8 +2,7 @@ const path = require('path');
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  distDir: process.env.NEXT_DIST_DIR || '.next',
-  output: process.env.NEXT_OUTPUT_MODE,
+  // Remove custom distDir and output for Railway
   experimental: {
     outputFileTracingRoot: path.join(__dirname, '../'),
   },
@@ -13,7 +12,14 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: false,
   },
-  images: { unoptimized: true },
+  images: { 
+    unoptimized: true,
+    domains: ['railway.app'] // Add Railway domain
+  },
+  // Add serverRuntimeConfig for Railway
+  serverRuntimeConfig: {
+    PROJECT_ROOT: __dirname
+  }
 };
 
 module.exports = nextConfig;
