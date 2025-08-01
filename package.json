@@ -1,12 +1,18 @@
 {
   "name": "app",
   "private": true,
+  {
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
-    "lint": "next lint"
-  },
+    "lint": "next lint",
+    "db:push": "prisma db push",
+    "db:migrate": "prisma migrate deploy",
+    "db:seed": "prisma db seed",
+    "postinstall": "prisma generate"
+  }
+},
   "prisma": {
     "seed": "tsx --require dotenv/config scripts/seed.ts"
   },
