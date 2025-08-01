@@ -1,10 +1,7 @@
-
 import { NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
 import { prisma } from "@/lib/db"
-import { writeFile, mkdir } from "fs/promises"
-import { join } from "path"
-import { v4 as uuidv4 } from "uuid"
+import { saveFile } from "@/lib/storage"
 
 export const dynamic = "force-dynamic"
 
@@ -58,21 +55,10 @@ export async function POST(request: Request) {
       }, { status: 400 })
     }
 
-    // Create upload directory if it doesn't exist
-    const uploadDir = join(process.cwd(), 'uploads', 'documents')
-    await mkdir(uploadDir, { recursive: true })
+    // Save file using the new storage adapter
+    const filePath = await saveFile(file, 'documents')
 
-    // Generate unique filename
-    const fileExtension = file.name.split('.').pop()
-    const uniqueFileName = `${uuidv4()}.${fileExtension}`
-    const filePath = join(uploadDir, uniqueFileName)
-
-    // Save file to filesystem
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-    await writeFile(filePath, buffer)
-
-    // Determine document type based on file name or content
+    // Determine document type based on file name
     const documentType = determineDocumentType(file.name)
 
     // Create document record in database
